@@ -1,4 +1,4 @@
-# Tononoka Steel Processing Weight Calculator  
+# Tononoka Steel Slits & Sheets Theoretical Weight Calculator  
 
 ![License](https://img.shields.io/badge/license-Tononoka-blue.svg)  
 ![Status](https://img.shields.io/badge/status-active-brightgreen.svg)  

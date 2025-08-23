@@ -428,21 +428,65 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
 // === Export / Print / Save Add-ons ===
-function openPrintWindowFromSection(sectionId, title) {
-    const section = document.getElementById(sectionId);
-    if (!section || section.style.display === 'none') {
-        alert('Please calculate first to generate results.');
-        return;
-    }
-    const win = window.open('', '_blank');
-    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title>
-    <link rel="stylesheet" href="styles.css"></head><body>
-    ${section.outerHTML}
-    <script>window.onload=function(){window.print();}</script>
-    </body></html>`;
-    win.document.open();
-    win.document.write(html);
-    win.document.close();
+// function openPrintWindowFromSection(sectionId, title) {
+//     const section = document.getElementById(sectionId);
+//     if (!section || section.style.display === 'none') {
+//         alert('Please calculate first to generate results.');
+//         return;
+//     }
+//     const win = window.open('', '_blank');
+//     const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title>
+//     <link rel="stylesheet" href="styles.css"></head><body>
+//     ${section.outerHTML}
+//     <script>window.onload=function(){window.print();}</script>
+//     </body></html>`;
+//     win.document.open();
+//     win.document.write(html);
+//     win.document.close();
+// }
+
+// Print Slitting Report
+const printSlittingBtn = document.getElementById('print-slitting');
+if (printSlittingBtn) {
+    printSlittingBtn.addEventListener('click', () => {
+        const resultSection = document.getElementById('slitting-results');
+        if (!resultSection || resultSection.style.display === 'none') {
+            alert('Please calculate first before printing');
+            return;
+        }
+
+        const printContent = resultSection.innerHTML;
+        const originalContent = document.body.innerHTML;
+
+        document.body.innerHTML = printContent;
+        window.print();
+        document.body.innerHTML = originalContent;
+
+        // Reattach event listeners
+        window.location.reload();
+    });
+}
+
+// Print Shearing Report
+const printShearingBtn = document.getElementById('print-shearing');
+if (printShearingBtn) {
+    printShearingBtn.addEventListener('click', () => {
+        const resultSection = document.getElementById('shearing-results');
+        if (!resultSection || resultSection.style.display === 'none') {
+            alert('Please calculate first before printing');
+            return;
+        }
+
+        const printContent = resultSection.innerHTML;
+        const originalContent = document.body.innerHTML;
+
+        document.body.innerHTML = printContent;
+        window.print();
+        document.body.innerHTML = originalContent;
+
+        // Reattach event listeners
+        window.location.reload();
+    });
 }
 
 function tablesInSectionToCSV(sectionId) {
