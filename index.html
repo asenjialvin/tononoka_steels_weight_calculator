@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steel Processing Weight Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-industry"></i>
+            </div>
+            <h1>Tononoka Steels Weight Calculator</h1>
+            <p>Calculate theoretical weights for slitting and shearing processes with precision</p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab-button active" data-tab="slitting">
+                <i class="fas fa-cut"></i> Slitting
+            </button>
+            <button class="tab-button" data-tab="shearing">
+                <i class="fas fa-ruler-combined"></i> Shearing
+            </button>
+        </div>
+        
+        <!-- Slitting Tab -->
+        <div class="tab-content active" id="slitting">
+            <div class="form-section">
+                <h3><i class="fas fa-cog"></i> Slitting Parameters</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="slit-coil-thickness">Coil Thickness (mm)</label>
+                        <input type="number" id="slit-coil-thickness" class="form-control" step="0.01" min="0" placeholder="e.g., 2.5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="slit-coil-width">Coil Width (mm)</label>
+                        <input type="number" id="slit-coil-width" class="form-control" step="1" min="0" placeholder="e.g., 1040">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="slit-coil-weight">Coil Weight (kg)</label>
+                        <input type="number" id="slit-coil-weight" class="form-control" step="0.01" min="0" placeholder="e.g., 10000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="slit-coil-number">Coil Number</label>
+                        <input type="text" id="slit-coil-number" class="form-control" placeholder="e.g., COIL-12345">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3><i class="fas fa-sliders-h"></i> Slit Combinations</h3>
+                <div id="slit-combinations">
+                    <div class="dynamic-row">
+                        <div>
+                            <label>Slit Width (mm)</label>
+                            <input type="number" class="form-control slit-width" step="1" min="0" placeholder="e.g., 147">
+                        </div>
+                        <div>
+                            <label>Number of Slits</label>
+                            <input type="number" class="form-control slit-count" step="1" min="0" placeholder="e.g., 7">
+                        </div>
+                        <div>
+                            <button class="btn btn-danger remove-slit" style="display: none;">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="add-slit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Another Slit Combination
+                </button>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="calculate-slitting" class="btn btn-success">
+                    <i class="fas fa-calculator"></i> Calculate
+                </button>
+                <button id="reset-slitting" class="btn btn-danger">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+                <button id="save-slitting" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Calculation
+                </button>
+            </div>
+            
+            <div class="result-section" id="slitting-results" style="display: none;">
+                <h3><i class="fas fa-chart-bar"></i> Slitting Results</h3>
+                
+                <div class="summary-card">
+                    <div class="card">
+                        <h4>Coil Size</h4>
+                        <div class="value" id="result-slit-coil-size">-</div>
+                    </div>
+                    <div class="card">
+                        <h4>Coil Weight</h4>
+                        <div class="value" id="result-slit-coil-weight">-</div>
+                    </div>
+                    <div class="card">
+                        <h4>Coil Number</h4>
+                        <div class="value" id="result-slit-coil-number">-</div>
+                    </div>
+                </div>
+                
+                <h4>Slit Details</h4>
+                <table id="slit-details-table">
+                    <thead>
+                        <tr>
+                            <th>Slit Size (mm)</th>
+                            <th>No. of Slits</th>
+                            <th>Weight per Slit (kg)</th>
+                            <th>Total Weight (kg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                
+                <h4>Scrap Summary</h4>
+                <table>
+                    <tr>
+                        <th>Scrap Width (mm)</th>
+                        <th>Scrap Weight (kg)</th>
+                    </tr>
+                    <tr>
+                        <td id="result-slit-scrap-width">-</td>
+                        <td id="result-slit-scrap-weight">-</td>
+                    </tr>
+                </table>
+                
+                <h4>Grand Total</h4>
+                <table>
+                    <tr>
+                        <th>Total Slits Weight (kg)</th>
+                        <th>Scrap Weight (kg)</th>
+                        <th>Grand Total (kg)</th>
+                    </tr>
+                    <tr>
+                        <td id="result-slit-total-weight">-</td>
+                        <td id="result-slit-total-scrap">-</td>
+                        <td id="result-slit-grand-total">-</td>
+                    </tr>
+                </table>
+                
+                <div class="export-options">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-file-pdf"></i> Export as PDF
+                    </button>
+                    <button class="btn btn-success">
+                        <i class="fas fa-file-excel"></i> Export as Excel
+                    </button>
+                    <button class="btn btn-warning">
+                        <i class="fas fa-print"></i> Print Report
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Shearing Tab -->
+        <div class="tab-content" id="shearing">
+            <div class="form-section">
+                <h3><i class="fas fa-cog"></i> Shearing Parameters</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="shear-coil-thickness">Coil Thickness (mm)</label>
+                        <input type="number" id="shear-coil-thickness" class="form-control" step="0.01" min="0" placeholder="e.g., 1.0">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="shear-coil-width">Coil Width (mm)</label>
+                        <input type="number" id="shear-coil-width" class="form-control" step="1" min="0" placeholder="e.g., 1215">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="shear-coil-weight">Coil Weight (kg)</label>
+                        <input type="number" id="shear-coil-weight" class="form-control" step="0.01" min="0" placeholder="e.g., 2901">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="shear-coil-number">Coil Number</label>
+                        <input type="text" id="shear-coil-number" class="form-control" placeholder="e.g., COIL-67890">
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="shear-coil-completed" class="form-control">
+                        <label for="shear-coil-completed">Coil Completed (Fully Sheared)</label>
+                        <span class="info-tooltip" title="Check if the entire coil has been processed">ⓘ</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="scrap-details" style="display: none;">
+                <div class="form-section">
+                    <h3><i class="fas fa-waste"></i> Scrap Details</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="scrap-length">Scrap Length (mm)</label>
+                            <input type="number" id="scrap-length" class="form-control" step="1" min="0" placeholder="e.g., 2180">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3><i class="fas fa-cut"></i> Sheet Sizes</h3>
+                <div id="sheet-sizes">
+                    <div class="dynamic-row">
+                        <div>
+                            <label>Sheet Length (mm)</label>
+                            <input type="number" class="form-control sheet-length" step="1" min="0" placeholder="e.g., 2440">
+                        </div>
+                        <div>
+                            <label>Prime Pieces</label>
+                            <input type="number" class="form-control prime-pieces" step="1" min="0" placeholder="e.g., 10">
+                        </div>
+                        <div>
+                            <label>2nd Quality Pieces</label>
+                            <input type="number" class="form-control second-pieces" step="1" min="0" value="0" placeholder="e.g., 2">
+                        </div>
+                        <div>
+                            <button class="btn btn-danger remove-sheet" style="display: none;">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="add-sheet" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Another Sheet Size
+                </button>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="calculate-shearing" class="btn btn-success">
+                    <i class="fas fa-calculator"></i> Calculate
+                </button>
+                <button id="reset-shearing" class="btn btn-danger">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+                <button id="save-shearing" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Calculation
+                </button>
+            </div>
+            
+            <div class="result-section" id="shearing-results" style="display: none;">
+                <h3><i class="fas fa-chart-bar"></i> Shearing Results</h3>
+                
+                <div class="summary-card">
+                    <div class="card">
+                        <h4>Coil Size</h4>
+                        <div class="value" id="result-shear-coil-size">-</div>
+                    </div>
+                    <div class="card">
+                        <h4>Coil Weight</h4>
+                        <div class="value" id="result-shear-coil-weight">-</div>
+                    </div>
+                    <div class="card">
+                        <h4>Coil Number</h4>
+                        <div class="value" id="result-shear-coil-number">-</div>
+                    </div>
+                    <div class="card">
+                        <h4>Status</h4>
+                        <div class="value" id="result-shear-status">-</div>
+                    </div>
+                </div>
+                
+                <h4>Sheet Details</h4>
+                <table id="sheet-details-table">
+                    <thead>
+                        <tr>
+                            <th>Sheet Size (L×W×T mm)</th>
+                            <th>Weight per Sheet (kg)</th>
+                            <th>Prime Pieces</th>
+                            <th>2nd Quality Pieces</th>
+                            <th>Total Weight (kg)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                
+                <h4>Scrap Summary</h4>
+                <table>
+                    <tr>
+                        <th>Scrap Length (mm)</th>
+                        <th>Scrap Weight (kg)</th>
+                    </tr>
+                    <tr>
+                        <td id="result-shear-scrap-length">-</td>
+                        <td id="result-shear-scrap-weight">-</td>
+                    </tr>
+                </table>
+                
+                <h4>Grand Total</h4>
+                <table>
+                    <tr>
+                        <th>Total Sheets Weight (kg)</th>
+                        <th>Scrap Weight (kg)</th>
+                        <th>Grand Total (kg)</th>
+                    </tr>
+                    <tr>
+                        <td id="result-shear-total-weight">-</td>
+                        <td id="result-shear-total-scrap">-</td>
+                        <td id="result-shear-grand-total">-</td>
+                    </tr>
+                </table>
+                
+                <div class="export-options">
+                    <button class="btn btn-primary">
+                        <i class="fas fa-file-pdf"></i> Export as PDF
+                    </button>
+                    <button class="btn btn-success">
+                        <i class="fas fa-file-excel"></i> Export as Excel
+                    </button>
+                    <button class="btn btn-warning">
+                        <i class="fas fa-print"></i> Print Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
