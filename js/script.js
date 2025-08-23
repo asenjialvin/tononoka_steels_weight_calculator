@@ -416,15 +416,15 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             // Example data for demonstration
-            document.getElementById('slit-coil-thickness').value = 3.0;
-            document.getElementById('slit-coil-width').value = 1040;
-            document.getElementById('slit-coil-weight').value = 10000;
-            document.getElementById('slit-coil-number').value = 'COIL-12345';
+            // document.getElementById('slit-coil-thickness').value = 3.0;
+            // document.getElementById('slit-coil-width').value = 1040;
+            // document.getElementById('slit-coil-weight').value = 10000;
+            // document.getElementById('slit-coil-number').value = 'COIL-12345';
             
-            document.getElementById('shear-coil-thickness').value = 1.0;
-            document.getElementById('shear-coil-width').value = 1215;
-            document.getElementById('shear-coil-weight').value = 2901;
-            document.getElementById('shear-coil-number').value = 'COIL-67890';
+            // document.getElementById('shear-coil-thickness').value = 1.0;
+            // document.getElementById('shear-coil-width').value = 1215;
+            // document.getElementById('shear-coil-weight').value = 2901;
+            // document.getElementById('shear-coil-number').value = 'COIL-67890';
         });
 
 // === Export / Print / Save Add-ons ===
