@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 slitCombinations.forEach(comb => {
                     const ribbonWeight = (comb.width * coilWeight) / (coilWidth + 10);
-                    const totalWeight = ribbonWeight * comb.count;
+                    const totalWeight = Math.round(ribbonWeight) * comb.count;
                     
                     slitDetails.push({
                         width: comb.width,
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     totalSlitWeight += totalWeight;
                 });
                 
-                const scrapWidth = coilWidth - totalSlitWidth;
+                const scrapWidth = (coilWidth - totalSlitWidth) + 10;
                 const scrapWeight = coilWeight - totalSlitWeight;
                 
                 // Display results
