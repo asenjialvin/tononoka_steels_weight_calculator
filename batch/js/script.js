@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         });
 
-        const scrapWidth = Math.max(0, w - totalSlitWidth);
+        const scrapWidth = Math.max(0, w - totalSlitWidth)+10;
         const scrapWeight = Math.max(0, c.weight - coilSlitsWeight);
 
         totCoilW += c.weight;
