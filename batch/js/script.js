@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Adjusted sheet/slit width (same rule you used before)
     function adjustedWidth(coilWidth) {
-      if (coilWidth >= 1212 && coilWidth <= 1219) return 1220;
+      if (coilWidth >= 1212 && coilWidth <= 1220) return 1220;
       return coilWidth + 10;
     }
 
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         });
 
-        const scrapWidth = Math.max(0, w - totalSlitWidth);
+        const scrapWidth = Math.max(0, w - totalSlitWidth)+10;
         const scrapWeight = Math.max(0, c.weight - coilSlitsWeight);
 
         totCoilW += c.weight;
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
           number: c.number || `COIL-${idx + 1}`,
           coilWeight: c.weight,
           slitDetails,
-          scrapWidth,
+          scrapWidth + 10,
           scrapWeight,
           grandTotal: c.weight // slits + scrap = coil weight
         });
