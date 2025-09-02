@@ -1,255 +1,442 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Tononoka Steels Weight Calculator</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link rel="stylesheet" href="css/styles.css">
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tononoka Steels - Sheet Calculation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --success: #27ae60;
+            --warning: #f39c12;
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f5f7fa; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; background: #fff; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,.1); overflow: hidden; }
+
+        header { background: linear-gradient(135deg, var(--primary), var(--dark)); color: #fff; padding: 1.5rem; text-align: center; position: relative; }
+        header h1 { margin-bottom: .5rem; font-size: 2.0rem; }
+        header p { opacity: .95; max-width: 760px; margin: 0 auto; }
+        .logo { position: absolute; top: 20px; left: 20px; font-size: 2rem; color: #fff; }
+
+        .tabs { display: flex; background-color: var(--dark); }
+        .tab-button { padding: 14px 24px; background: none; border: none; color: #fff; cursor: pointer; font-size: 16px; font-weight: 500; transition: all .3s; display: flex; align-items: center; gap: 8px; }
+        .tab-button:hover { background-color: rgba(255,255,255,.08); }
+        .tab-button.active { background-color: var(--secondary); color: #fff; }
+
+        .tab-content { display: none; padding: 24px; background-color: #fff; }
+        .tab-content.active { display: block; animation: fadeIn .35s; }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+        .form-section { background: var(--light); padding: 18px; border-radius: 8px; margin-bottom: 22px; }
+        .form-section h3 { margin-bottom: 12px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--dark); }
+        .form-control { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; transition: border .2s, box-shadow .2s; background:#fff; }
+        .form-control:focus { border-color: var(--secondary); outline: none; box-shadow: 0 0 0 3px rgba(52,152,219,.18); }
+
+        .checkbox-group { display: flex; align-items: center; gap: 10px; }
+        .checkbox-group input[type="checkbox"] { width: 18px; height: 18px; }
+
+        .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; transition: all .25s; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background-color: var(--secondary); color: #fff; }
+        .btn-primary:hover { background-color: #2980b9; transform: translateY(-1px); }
+        .btn-success { background-color: var(--success); color: #fff; }
+        .btn-success:hover { background-color: #219653; transform: translateY(-1px); }
+        .btn-danger { background-color: var(--accent); color: #fff; }
+        .btn-danger:hover { background-color: #c0392b; transform: translateY(-1px); }
+        .btn-warning { background-color: var(--warning); color: #fff; }
+        .btn-warning:hover { background-color: #e67e22; transform: translateY(-1px); }
+
+        .dynamic-row { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-end; padding: 12px; background: #fff; border-radius: 8px; border: 1px solid #eee; }
+        .dynamic-row > div { flex: 1; }
+
+        .action-buttons { display: flex; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
+
+        .coils-flex { display: flex; gap: 12px; flex-wrap: wrap; }
+        .coil-card { flex: 1 1 280px; background: #fff; border: 1px solid #e8e8e8; border-radius: 10px; padding: 12px; box-shadow: 0 4px 10px rgba(0,0,0,.05); }
+        .coil-card h4 { margin-bottom: 8px; color: var(--primary); font-size: 16px; }
+        .coil-mini-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+        .table-note { font-size: 13px; color: #666; margin-top: -8px; margin-bottom: 8px; }
+
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; box-shadow: 0 0 10px rgba(0,0,0,.05); }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 10px; text-align: left; font-size: 14px; }
+        th { background-color: var(--light); color: var(--dark); font-weight: 700; }
+        tr:nth-child(even) { background-color: #fafafa; }
+        .totals-row th, .totals-row td { font-weight: 800; }
+
+        .result-section { margin-top: 22px; padding: 20px; background: linear-gradient(to bottom, #f9f9f9, #f1f1f1); border-radius: 10px; border-left: 5px solid var(--secondary); }
+        .result-section h3 { margin-bottom: 16px; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+
+        .summary-card { display: flex; justify-content: space-around; margin: 18px 0; flex-wrap: wrap; gap: 16px; }
+        .card { background: #fff; padding: 16px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,.08); text-align: center; min-width: 180px; }
+        .card h4 { color: var(--dark); margin-bottom: 8px; }
+        .card .value { font-size: 22px; font-weight: 800; color: var(--secondary); }
+
+        .efficiency-box {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 16px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .scrap-row {
+            background-color: #ffe6e6;
+        }
+
+        .scrap-row th {
+            color: #e74c3c;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .dynamic-row { flex-direction: column; }
+            .tabs { flex-direction: column; }
+            .tab-button { width: 100%; justify-content: center; }
+            .action-buttons { flex-direction: column; }
+            .summary-card { flex-direction: column; }
+            .coil-mini-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
 <body>
     <div class="container">
         <header>
             <div class="logo">
-                <img src="image/logo.jpg" alt="Tononoka Steels Logo" style="height:60px;">
-                <!-- <i class="fas fa-industry"></i> -->
+                <i class="fas fa-industry"></i>
             </div>
-            <h1>Tononoka Steels Theoretical Weight Calculator</h1>
-            <p>Calculate theoretical weights for slitting and shearing processes with precision</p>
+            <h1>Tononoka Steels Sheet Calculation</h1>
+            <p>Calculate expected number of sheets from coils with precision</p>
         </header>
 
         <div class="tabs">
-            <button class="tab-button active" data-tab="slitting"><i class="fas fa-cut"></i> Slitting</button>
-            <button class="tab-button" data-tab="shearing"><i class="fas fa-ruler-combined"></i> Shearing</button>
+            <button class="tab-button active" data-tab="sheet-calculation"><i class="fas fa-calculator"></i> Sheet Calculation</button>
         </div>
 
-        <!-- SLITTING TAB -->
-        <div class="tab-content active" id="slitting">
+        <!-- SHEET CALCULATION TAB -->
+        <div class="tab-content active" id="sheet-calculation">
             <!-- Common parameters -->
             <div class="form-section">
-                <h3><i class="fas fa-cog"></i> Common Coil Parameters</h3>
+                <h3><i class="fas fa-cog"></i> Coil Parameters</h3>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="slit-coil-thickness">Coil Thickness (mm)</label>
-                        <input type="number" id="slit-coil-thickness" class="form-control" step="0.01" min="0" placeholder="e.g., 3.0" required>
+                        <label for="sheet-coil-thickness">Coil Thickness (mm)</label>
+                        <input type="number" id="sheet-coil-thickness" class="form-control" step="0.01" min="0" placeholder="e.g., 0.7" required>
                     </div>
                     <div class="form-group">
-                        <label for="slit-coil-width">Coil Width (mm)</label>
-                        <input type="number" id="slit-coil-width" class="form-control" step="1" min="0" placeholder="e.g., 1040" required>
+                        <label for="sheet-coil-width">Coil Width (mm)</label>
+                        <input type="number" id="sheet-coil-width" class="form-control" step="1" min="0" placeholder="e.g., 1219" required>
                     </div>
                     <div class="form-group">
-                        <label for="slit-num-coils">Number of Coils</label>
-                        <input type="number" id="slit-num-coils" class="form-control" step="1" min="1" placeholder="e.g., 3">
-                    </div>
-                    <div class="form-group">
-                        <button id="slit-generate-coils" class="btn btn-primary" type="button">
-                            <i class="fas fa-layer-group"></i> Generate Coil Inputs
-                        </button>
+                        <label for="sheet-coil-weight">Coil Weight (kg)</label>
+                        <input type="number" id="sheet-coil-weight" class="form-control" step="0.01" min="0" placeholder="e.g., 10000" required>
                     </div>
                 </div>
             </div>
 
-            <!-- Per-coil inputs (number & weight) -->
+            <!-- Sheet sizes configuration -->
             <div class="form-section">
-                <h3><i class="fas fa-hashtag"></i> Unique Coil Details</h3>
-                <div id="slit-coils-container" class="coils-flex"></div>
-            </div>
-
-            <!-- Slit combinations (shared across all coils) -->
-            <div class="form-section">
-                <h3><i class="fas fa-sliders-h"></i> Slit Combination(s)</h3>
-                <div id="slit-combinations">
-                    <div class="dynamic-row">
+                <h3><i class="fas fa-ruler"></i> Sheet Sizes</h3>
+                <p class="table-note">Add sheet sizes you want to produce. For special sizes, you can optionally specify the number of pieces needed.</p>
+                
+                <div id="sheet-sizes-container">
+                    <div class="dynamic-row sheet-size-row">
                         <div>
-                            <label>Slit Width (mm)</label>
-                            <input type="number" class="form-control slit-width" step="1" min="0" placeholder="e.g., 147">
+                            <label>Sheet Length (mm)</label>
+                            <input type="number" class="form-control sheet-length" step="1" min="0" placeholder="e.g., 2440" required>
                         </div>
                         <div>
-                            <label>Number of Slits</label>
-                            <input type="number" class="form-control slit-count" step="1" min="0" placeholder="e.g., 7">
+                            <label>Number of Pieces (Optional)</label>
+                            <input type="number" class="form-control sheet-quantity" step="1" min="0" placeholder="Leave blank for auto-calculation">
                         </div>
                         <div>
-                            <button class="btn btn-danger remove-slit" style="display:none;"><i class="fas fa-trash"></i> Remove</button>
+                            <button class="btn btn-danger remove-sheet-size"><i class="fas fa-trash"></i> Remove</button>
                         </div>
                     </div>
                 </div>
-                <button id="add-slit" class="btn btn-primary" type="button"><i class="fas fa-plus"></i> Add Another Slit Combination</button>
+                <button id="add-sheet-size" class="btn btn-primary" type="button"><i class="fas fa-plus"></i> Add Another Sheet Size</button>
             </div>
 
             <div class="action-buttons">
-                <button id="calculate-slitting" class="btn btn-success" type="button"><i class="fas fa-calculator"></i> Calculate</button>
-                <button id="reset-slitting" class="btn btn-danger" type="button"><i class="fas fa-redo"></i> Reset</button>
-                <button id="print-slitting" class="btn btn-warning" type="button"><i class="fas fa-print"></i> Print</button>
+                <button id="calculate-sheets" class="btn btn-success" type="button"><i class="fas fa-calculator"></i> Calculate</button>
+                <button id="reset-sheets" class="btn btn-danger" type="button"><i class="fas fa-redo"></i> Reset</button>
             </div>
 
             <!-- Results -->
-            <div class="result-section" id="slitting-results" style="display:none;">
-                <h3><i class="fas fa-chart-bar"></i> Slitting Results</h3>
+            <div class="result-section" id="sheet-results" style="display:none;">
+                <h3><i class="fas fa-chart-bar"></i> Sheet Calculation Results</h3>
 
                 <div class="summary-card">
                     <div class="card">
                         <h4>Coil Size</h4>
-                        <div class="value" id="result-slit-coil-size">-</div>
+                        <div class="value" id="result-sheet-coil-size">-</div>
                     </div>
                     <div class="card">
-                        <h4># Coils</h4>
-                        <div class="value" id="result-slit-coil-count">-</div>
+                        <h4>Coil Weight</h4>
+                        <div class="value" id="result-sheet-coil-weight">-</div>
                     </div>
                     <div class="card">
-                        <h4>Total Coil Weight</h4>
-                        <div class="value" id="result-slit-total-coil-weight">-</div>
+                        <h4>Standard 8ft Weight</h4>
+                        <div class="value" id="result-standard-weight">-</div>
                     </div>
                 </div>
 
-                <h4>Per-Coil Summary</h4>
-                <table id="slit-summary-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Coil Number</th>
-                            <th>Coil Weight (kg)</th>
-                            <th>Slit Size (mm)</th>
-                            <th>One Slit Weight (kg)</th>
-                            <th>Total Slit Weight (kg)</th>
-                            <th>Scrap Width (mm)</th>
-                            <th>Scrap Weight (kg)</th>
-                            <th>Coil Total (kg)</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                    <tfoot>
-                        <tr class="totals-row">
-                            <th colspan="2">Grand Totals</th>
-                            <th id="slit-total-coilweight">-</th>
-                            <th colspan="2">-</th>
-                            <th id="slit-total-slitsweight">-</th>
-                            <th id="slit-total-scrapwidth">-</th>
-                            <th id="slit-total-scrapweight">-</th>
-                            <th id="slit-grand-total">-</th>
-                        </tr>
-                    </tfoot>
-                </table>
-
-                <h4>Totals Per Slit Size (All Coils)</h4>
-                <table id="slit-per-size-table">
-                    <thead>
-                        <tr>
-                            <th>Slit Size (mm)</th>
-                            <th>Total Pieces (across coils)</th>
-                            <th>Total Weight (kg)</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- SHEARING TAB -->
-        <div class="tab-content" id="shearing">
-            <!-- Common parameters -->
-            <div class="form-section">
-                <h3><i class="fas fa-cog"></i> Common Coil Parameters</h3>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="shear-coil-thickness">Coil Thickness (mm)</label>
-                        <input type="number" id="shear-coil-thickness" class="form-control" step="0.01" min="0" placeholder="e.g., 0.7" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="shear-coil-width">Coil Width (mm)</label>
-                        <input type="number" id="shear-coil-width" class="form-control" step="1" min="0" placeholder="e.g., 1219" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="shear-num-coils">Number of Coils</label>
-                        <input type="number" id="shear-num-coils" class="form-control" step="1" min="1" placeholder="e.g., 3">
-                    </div>
-                    <div class="form-group">
-                        <button id="shear-generate-coils" class="btn btn-primary" type="button">
-                            <i class="fas fa-layer-group"></i> Generate Coil Inputs
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Per-coil inputs (number, weight, completed, scrap length + sheet sizes per coil) -->
-            <div class="form-section">
-                <h3><i class="fas fa-hashtag"></i> Unique Coil Details & Sheet Sizes</h3>
-                <div id="shear-coils-container" class="coils-flex"></div>
-            </div>
-
-            <div class="action-buttons">
-                <button id="calculate-shearing" class="btn btn-success" type="button"><i class="fas fa-calculator"></i> Calculate</button>
-                <button id="reset-shearing" class="btn btn-danger" type="button"><i class="fas fa-redo"></i> Reset</button>
-                <button id="print-shearing" class="btn btn-warning" type="button"><i class="fas fa-print"></i> Print</button>
-            </div>
-
-            <!-- Results -->
-            <div class="result-section" id="shearing-results" style="display:none;">
-                <h3><i class="fas fa-chart-bar"></i> Shearing Results</h3>
-
-                <div class="summary-card">
-                    <div class="card">
-                        <h4>Coil Size</h4>
-                        <div class="value" id="result-shear-coil-size">-</div>
-                    </div>
-                    <div class="card">
-                        <h4># Coils</h4>
-                        <div class="value" id="result-shear-coil-count">-</div>
-                    </div>
-                    <div class="card">
-                        <h4>Total Coil Weight</h4>
-                        <div class="value" id="result-shear-total-coil-weight">-</div>
-                    </div>
-                </div>
-
-                <div class="standard-weight-box">
-                    <h4><i class="fas fa-info-circle"></i> Standard Weight Reference</h4>
-                    <p>Standard weight for 8ft (2440mm) sheet: <span id="standard-weight-value">0.00</span> kg</p>
-                </div>
-
-                <h4>Per-Coil Summary</h4>
-                <table id="shear-summary-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Coil Number</th>
-                            <th>Status</th>
-                            <th>Coil Weight (kg)</th>
-                            <th>Sheet Size (mm)</th>
-                            <th>Sheet Weight (kg)</th>
-                            <th>Total Sheet Weight (kg)</th>
-                            <th>Scrap Weight (kg)</th>
-                            <th>Coil Total (kg)</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                    <tfoot>
-                        <tr class="totals-row">
-                            <th colspan="3">Grand Totals</th>
-                            <th id="shear-total-coilweight">-</th>
-                            <th colspan="2">-</th>
-                            <th id="shear-total-sheetsweight">-</th>
-                            <th id="shear-total-scrapweight">-</th>
-                            <th id="shear-grand-total">-</th>
-                        </tr>
-                    </tfoot>
-                </table>
-
-                <h4>Totals Per Sheet Length (All Coils)</h4>
-                <table id="shear-per-size-table">
+                <h4>Sheet Distribution</h4>
+                <table id="sheet-distribution-table">
                     <thead>
                         <tr>
                             <th>Sheet Length (mm)</th>
-                            <th>Total Pieces</th>
+                            <th>Weight per Sheet (kg)</th>
+                            <th>Number of Sheets</th>
                             <th>Total Weight (kg)</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
+                    <tfoot>
+                        <tr class="totals-row">
+                            <th colspan="2">Totals</th>
+                            <th id="sheet-total-pieces">-</th>
+                            <th id="sheet-total-weight">-</th>
+                        </tr>
+                        <tr class="scrap-row">
+                            <th colspan="3">Scrap Weight</th>
+                            <th id="sheet-scrap-weight">-</th>
+                        </tr>
+                    </tfoot>
                 </table>
+
+                <div class="efficiency-box">
+                    <h4><i class="fas fa-tachometer-alt"></i> Efficiency Metrics</h4>
+                    <p>Material Utilization: <span id="material-utilization">0.00%</span></p>
+                    <p>Scrap Percentage: <span id="scrap-percentage">0.00%</span></p>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // ===== SHEET CALCULATION TAB =====
+            const sheetAddBtn = document.getElementById('add-sheet-size');
+            const sheetSizesContainer = document.getElementById('sheet-sizes-container');
+            const sheetCalcBtn = document.getElementById('calculate-sheets');
+            const sheetResetBtn = document.getElementById('reset-sheets');
+
+            // Helper functions
+            const number = v => (isFinite(+v) ? +v : 0);
+            const fmt0 = v => Math.round(v).toLocaleString();
+            const fmt2 = v => (isFinite(v) ? (+v).toFixed(2) : '0.00');
+            const density = 7850; // kg/m^3
+
+            // Adjusted sheet width for shearing
+            function adjustedWidth(coilWidth) {
+                if (coilWidth >= 1212 && coilWidth <= 1220) return 1220;
+                return coilWidth + 10;
+            }
+
+            // Add event listener for adding sheet size rows
+            sheetAddBtn.addEventListener('click', () => {
+                const row = document.createElement('div');
+                row.className = 'dynamic-row sheet-size-row';
+                row.innerHTML = `
+                    <div>
+                        <label>Sheet Length (mm)</label>
+                        <input type="number" class="form-control sheet-length" step="1" min="0" placeholder="e.g., 2440" required>
+                    </div>
+                    <div>
+                        <label>Number of Pieces (Optional)</label>
+                        <input type="number" class="form-control sheet-quantity" step="1" min="0" placeholder="Leave blank for auto-calculation">
+                    </div>
+                    <div>
+                        <button class="btn btn-danger remove-sheet-size"><i class="fas fa-trash"></i> Remove</button>
+                    </div>
+                `;
+                row.querySelector('.remove-sheet-size').addEventListener('click', () => row.remove());
+                sheetSizesContainer.appendChild(row);
+            });
+
+            // Calculate sheets from coil
+            sheetCalcBtn.addEventListener('click', () => {
+                const t = number(document.getElementById('sheet-coil-thickness').value);
+                const w = number(document.getElementById('sheet-coil-width').value);
+                const coilWeight = number(document.getElementById('sheet-coil-weight').value);
+                
+                if (!t || !w || !coilWeight) { 
+                    alert('Please enter all coil parameters.'); 
+                    return; 
+                }
+                
+                // Calculate standard weight for 8ft (2440mm) sheet
+                const aw = adjustedWidth(w);
+                const standardWeight2440 = (t / 1000) * (aw / 1000) * (2440 / 1000) * density;
+                
+                // Get sheet sizes
+                const sheetRows = sheetSizesContainer.querySelectorAll('.sheet-size-row');
+                const sheetSizes = [];
+                
+                sheetRows.forEach(row => {
+                    const length = number(row.querySelector('.sheet-length').value);
+                    const quantity = number(row.querySelector('.sheet-quantity').value) || null;
+                    
+                    if (length > 0) {
+                        // Calculate weight for this sheet size
+                        const weightPerSheet = (standardWeight2440 * length) / 2440;
+                        sheetSizes.push({ length, weightPerSheet, quantity });
+                    }
+                });
+                
+                if (sheetSizes.length === 0) {
+                    alert('Please add at least one sheet size.');
+                    return;
+                }
+                
+                // Calculate distribution
+                let remainingWeight = coilWeight;
+                const results = [];
+                
+                // First process sheets with specified quantities
+                sheetSizes.forEach(sheet => {
+                    if (sheet.quantity !== null) {
+                        const totalWeight = sheet.weightPerSheet * sheet.quantity;
+                        if (totalWeight <= remainingWeight) {
+                            results.push({
+                                length: sheet.length,
+                                weightPerSheet: sheet.weightPerSheet,
+                                quantity: sheet.quantity,
+                                totalWeight: totalWeight
+                            });
+                            remainingWeight -= totalWeight;
+                        } else {
+                            // If specified quantity exceeds available weight, calculate maximum possible
+                            const maxQuantity = Math.floor(remainingWeight / sheet.weightPerSheet);
+                            const totalWeight = sheet.weightPerSheet * maxQuantity;
+                            
+                            results.push({
+                                length: sheet.length,
+                                weightPerSheet: sheet.weightPerSheet,
+                                quantity: maxQuantity,
+                                totalWeight: totalWeight
+                            });
+                            remainingWeight -= totalWeight;
+                        }
+                    }
+                });
+                
+                // Then distribute remaining weight to unspecified sheets, prioritizing larger sheets first
+                // Sort by weight per sheet (descending) to minimize scrap
+                const unspecifiedSheets = sheetSizes
+                    .filter(sheet => sheet.quantity === null)
+                    .sort((a, b) => b.weightPerSheet - a.weightPerSheet);
+                
+                if (unspecifiedSheets.length > 0) {
+                    // Calculate how many of each sheet type we can get from remaining weight
+                    unspecifiedSheets.forEach(sheet => {
+                        if (remainingWeight >= sheet.weightPerSheet) {
+                            const quantity = Math.floor(remainingWeight / sheet.weightPerSheet);
+                            const totalWeight = sheet.weightPerSheet * quantity;
+                            
+                            results.push({
+                                length: sheet.length,
+                                weightPerSheet: sheet.weightPerSheet,
+                                quantity: quantity,
+                                totalWeight: totalWeight
+                            });
+                            remainingWeight -= totalWeight;
+                        }
+                    });
+                }
+                
+                // Calculate totals
+                let totalSheets = 0;
+                let totalWeightUsed = 0;
+                
+                results.forEach(result => {
+                    totalSheets += result.quantity;
+                    totalWeightUsed += result.totalWeight;
+                });
+                
+                const scrapWeight = coilWeight - totalWeightUsed;
+                const utilization = (totalWeightUsed / coilWeight) * 100;
+                const scrapPercentage = (scrapWeight / coilWeight) * 100;
+                
+                // Display results
+                document.getElementById('result-sheet-coil-size').textContent = `${t} × ${w}`;
+                document.getElementById('result-sheet-coil-weight').textContent = `${fmt2(coilWeight)} kg`;
+                document.getElementById('result-standard-weight').textContent = `${fmt2(standardWeight2440)} kg`;
+                
+                const tbody = document.querySelector('#sheet-distribution-table tbody');
+                tbody.innerHTML = '';
+                
+                results.forEach(result => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${result.length}</td>
+                        <td>${fmt2(result.weightPerSheet)}</td>
+                        <td>${fmt0(result.quantity)}</td>
+                        <td>${fmt2(result.totalWeight)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                
+                document.getElementById('sheet-total-pieces').textContent = fmt0(totalSheets);
+                document.getElementById('sheet-total-weight').textContent = `${fmt2(totalWeightUsed)} kg`;
+                document.getElementById('sheet-scrap-weight').textContent = `${fmt2(scrapWeight)} kg`;
+                document.getElementById('material-utilization').textContent = `${fmt2(utilization)}%`;
+                document.getElementById('scrap-percentage').textContent = `${fmt2(scrapPercentage)}%`;
+                
+                document.getElementById('sheet-results').style.display = 'block';
+            });
+
+            // Reset sheet calculation form
+            sheetResetBtn.addEventListener('click', () => {
+                document.getElementById('sheet-coil-thickness').value = '';
+                document.getElementById('sheet-coil-width').value = '';
+                document.getElementById('sheet-coil-weight').value = '';
+                sheetSizesContainer.innerHTML = `
+                    <div class="dynamic-row sheet-size-row">
+                        <div>
+                            <label>Sheet Length (mm)</label>
+                            <input type="number" class="form-control sheet-length" step="1" min="0" placeholder="e.g., 2440" required>
+                        </div>
+                        <div>
+                            <label>Number of Pieces (Optional)</label>
+                            <input type="number" class="form-control sheet-quantity" step="1" min="0" placeholder="Leave blank for auto-calculation">
+                        </div>
+                        <div>
+                            <button class="btn btn-danger remove-sheet-size"><i class="fas fa-trash"></i> Remove</button>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('sheet-results').style.display = 'none';
+                
+                // Reattach event listeners
+                document.querySelectorAll('.remove-sheet-size').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.target.closest('.sheet-size-row').remove();
+                    });
+                });
+            });
+
+            // Initialize remove buttons
+            document.querySelectorAll('.remove-sheet-size').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.target.closest('.sheet-size-row').remove();
+                });
+            });
+        });
+    </script>
 </body>
 </html>
